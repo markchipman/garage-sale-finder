@@ -1,0 +1,44 @@
+/**
+ * footer.scss
+ * Styles for the page footer
+ */
+
+.footer {
+  border-top: $footer-border;
+  color: $footer-color;
+  margin-top: 24px;
+  padding: 12px 0;
+  text-align: center;
+
+  &__content {
+    @include page-container();
+  }
+
+  &__quote {
+    align-items: center;
+    display: flex;
+    font-style: italic;
+    justify-content: center;
+    padding-bottom: 8px;
+  }
+
+  &__quote-text {
+    &:before,
+    &:after {
+      content: '"';
+    }
+  }
+
+  &__quote-author {
+    &:before {
+      content: '—';
+      padding: 0 4px;
+    }
+  }
+
+  &__credits-link {
+    &:hover {
+      font-weight: bold;
+    }
+  }
+}

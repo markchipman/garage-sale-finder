@@ -1,0 +1,15 @@
+/**
+ * header.scss
+ * Styles for page header
+ */
+
+.header {
+  @include page-container();
+  text-align: center;
+
+  &__title {
+    font-family: 'Lobster', sans-serif;
+    font-size: 45px;
+    margin: 24px 0 36px;
+  }
+}

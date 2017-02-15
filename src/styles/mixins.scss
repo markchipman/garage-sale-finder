@@ -1,0 +1,12 @@
+/**
+ * mixins.scss
+ * File where all mixins are defined
+ */
+
+@mixin page-container() {
+  display: block;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+  width: 1128px;
+}

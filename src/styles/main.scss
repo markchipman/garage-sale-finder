@@ -1,0 +1,10 @@
+/**
+ * main.scss
+ * Styles for main page content
+ */
+
+.main {
+  &__content {
+    @include page-container();
+  }
+}
