@@ -22,6 +22,17 @@ let map = new MapboxGL.Map({
 
 const client = new MapboxClient(accessToken);
 
+const randomQuotes = [
+  {
+    text: 'One person\'s trash is another person\'s treasure',
+    author: 'Unknown',
+  },
+  {
+    text: 'I only feel angry when I see waste. When I see people throwing away things we could use.',
+    author: 'Mother Teresa',
+  },
+];
+
 const debounce = (func, wait = 100, context = this) => {
   let timeout;
   let args;
@@ -65,6 +76,14 @@ $(window).on('click', (event) => {
   if (!$eventTarget.hasClass('typeahead__result')) {
     $('.typeahead__results').empty();
   }
+});
+
+$(document).ready(() => {
+  const index = Math.floor(Math.random() * (randomQuotes.length - 0)) + 0;
+  const randomQuote = randomQuotes[index];
+
+  $('.footer__quote-text').innerHTML = randomQuote['text'];
+  $('.footer__quote-author').innerHTML = randomQuote['author'];
 });
 
 $(window).on('keydown', (event) => {

@@ -15,7 +15,10 @@ a {
 
 body {
 	background-color: $background;
-	font-family: 'Open Sans', sans-serif;
+	color: $body;
+	font-family: 'Raleway', sans-serif;
+	font-size: 100%;
+	line-height: 1;
 }
 
 html, body, div, span, applet, object, iframe,
@@ -42,10 +45,6 @@ time, mark, audio, video {
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
-}
-
-body {
-	line-height: 1;
 }
 
 ol, ul {

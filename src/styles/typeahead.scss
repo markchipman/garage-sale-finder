@@ -4,20 +4,25 @@
  */
 
 .typeahead {
+  margin: 0 auto 1em auto;
   position: relative;
+  width: 50%;
 
   &__input {
     box-sizing: border-box;
     display: block;
-    padding: 8px;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.85em;
+    margin: 0 auto;
+    padding: 0.85em;
     width: 100%;
   }
 
   &__results {
-    list-style: none;
+    font-size: 0.85em;
     position: absolute;
-    width: 100%;
     z-index: 9999;
+    width: 100%;
   }
 
   &__result {
@@ -25,7 +30,7 @@
     border: 1px solid $typeahead-result-background-darker;
     border-top: 0;
     cursor: pointer;
-    padding: 12px;
+    padding: 0.85em;
 
     &:hover {
       background: $typeahead-result-background-darker;
