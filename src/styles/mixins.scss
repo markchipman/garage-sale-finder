@@ -4,9 +4,10 @@
  */
 
 @mixin page-container() {
+  box-sizing: border-box;
   display: block;
   margin: 0 auto;
   padding: 0 1.5em;
   position: relative;
-  width: 1128px;
+  width: 100vw;
 }

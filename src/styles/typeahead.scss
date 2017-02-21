@@ -10,6 +10,7 @@
 
   &__input {
     box-sizing: border-box;
+    border: 1px solid #d2cfc6;
     display: block;
     font-family: 'Raleway', sans-serif;
     font-size: 0.85em;
@@ -19,6 +20,7 @@
   }
 
   &__results {
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
     font-size: 0.85em;
     position: absolute;
     z-index: 9999;
@@ -26,14 +28,14 @@
   }
 
   &__result {
-    background: $typeahead-result-background;
-    border: 1px solid $typeahead-result-background-darker;
+    background: #fff;
+    border: 1px solid #d2cfc6;
     border-top: 0;
     cursor: pointer;
     padding: 0.85em;
 
     &:hover {
-      background: $typeahead-result-background-darker;
+      background: #f4f3f1;
     }
   }
 }

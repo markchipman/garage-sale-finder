@@ -4,8 +4,7 @@
  */
 
 .footer {
-  border-top: $footer-border;
-  color: $footer-color;
+  border-top: 1px solid #d2cfc6;
   margin-top: 1.5em;
   padding: 1.5em 0;
   text-align: center;
@@ -17,9 +16,11 @@
   &__quote {
     align-items: center;
     display: flex;
+    flex-flow: row wrap;
     font-size: 0.9em;
     font-style: italic;
     justify-content: center;
+    line-height: 1.5em;
     padding-bottom: 1em;
   }
 
@@ -37,13 +38,11 @@
     }
   }
 
-  &__credits {
-    font-size: 0.8em;
+  &__heart {
+    color: #ff6a5c;
   }
 
-  &__credits-link {
-    &:hover {
-      font-weight: bold;
-    }
+  &__credits {
+    font-size: 0.8em;
   }
 }
