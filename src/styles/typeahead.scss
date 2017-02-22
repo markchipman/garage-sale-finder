@@ -10,7 +10,7 @@
 
   &__input {
     box-sizing: border-box;
-    border: 1px solid #d2cfc6;
+    border: 1px solid #dedbd3;
     display: block;
     font-family: 'Raleway', sans-serif;
     font-size: 0.85em;
@@ -29,13 +29,19 @@
 
   &__result {
     background: #fff;
-    border: 1px solid #d2cfc6;
+    border: 1px solid #dedbd3;
     border-top: 0;
     cursor: pointer;
     padding: 0.85em;
 
+    &:focus,
     &:hover {
       background: #f4f3f1;
+    }
+
+    &--highlighted {
+      background: #e8f7fc !important;
+      border-color: #bce7f6;
     }
   }
 }
