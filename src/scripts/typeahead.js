@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import MapboxClient from 'mapbox';
-import { KEY_CODES, MAPBOX } from './constants';
+import { KEY_CODES, MAPBOX, TYPEAHEAD } from './constants';
 import { debounce } from './utils';
 
 /**
@@ -27,8 +27,8 @@ class Typeahead {
    * @return {undefined}
    */
   _getElements() {
-    this._$typeahead = $('.typeahead__input');
-    this._$typeaheadResults = $('.typeahead__results');
+    this._$typeahead = $(`.${TYPEAHEAD.INPUT_CLASS}`);
+    this._$typeaheadResults = $(`.${TYPEAHEAD.RESULTS_CLASS}`);
     this._$previousResults = this._$typeaheadResults.children();
   }
 
@@ -54,12 +54,11 @@ class Typeahead {
    */
   _handleWindowClick(evt) {
     const $eventTarget = $(evt.target);
-    const isClickOutside = !($eventTarget.hasClass('typeahead__input') ||
-                             $eventTarget.hasClass('typeahead__result'));
+    const isClickOutside = !($eventTarget.hasClass(TYPEAHEAD.INPUT_CLASS) ||
+                             $eventTarget.hasClass(TYPEAHEAD.RESULT_CLASS));
 
     if (this._isResultsOpen && isClickOutside) {
-      this._$typeaheadResults.empty();
-      this._isResultsOpen = false;
+      this._clearResults();
     }
   }
 
@@ -78,51 +77,108 @@ class Typeahead {
       return;
     }
 
-    // TODO: Break switch cases out into separate functions
-    // TODO: Set input text to highlighted suggestion
     switch (event.keyCode) {
       case KEY_CODES.ENTER:
-        if (this._highlightedIndex !== null) {
-          this._$previousResults.eq(this._highlightedIndex).click();
-          this._$previousResults.eq(this._highlightedIndex).removeClass('typeahead__result--highlighted');
-          this._highlightedIndex = null;
-        }
+        this._enterInput();
         break;
       case KEY_CODES.ESC:
-        this._$typeaheadResults.empty();
-        this._isResultsOpen = false;
+        this._clearResults();
         break;
       case KEY_CODES.UP:
-        if (this._highlightedIndex === null) {
-          this._highlightedIndex = this._$previousResults.length - 1;
-          this._$previousResults.eq(this._highlightedIndex).addClass('typeahead__result--highlighted');
-        } else if (this._highlightedIndex === 0) {
-          this._$previousResults.eq(this._highlightedIndex).removeClass('typeahead__result--highlighted');
-          this._highlightedIndex = null;
-        } else {
-          this._$previousResults.eq(this._highlightedIndex).removeClass('typeahead__result--highlighted');
-          this._highlightedIndex -= 1;
-          this._$previousResults.eq(this._highlightedIndex).addClass('typeahead__result--highlighted');
-        }
-        return false;
+        this._highlightUp();
         break;
       case KEY_CODES.DOWN:
-        if (this._highlightedIndex === null) {
-          this._highlightedIndex = 0;
-          this._$previousResults.eq(this._highlightedIndex).addClass('typeahead__result--highlighted');
-        } else if (this._highlightedIndex === this._$previousResults.length - 1) {
-          this._$previousResults.eq(this._highlightedIndex).removeClass('typeahead__result--highlighted');
-          this._highlightedIndex = null;
-        } else {
-          this._$previousResults.eq(this._highlightedIndex).removeClass('typeahead__result--highlighted');
-          this._highlightedIndex += 1;
-          this._$previousResults.eq(this._highlightedIndex).addClass('typeahead__result--highlighted');
-        }
-        return false;
+        this._highlightDown();
         break;
       default:
         break;
     }
+  }
+
+  /**
+   * When the enter key is pressed while a result is highlighted,
+   * simulate a click on that result and clear highlighting.
+   * @method _enterInput
+   * @return {undefined}
+   */
+  _enterInput() {
+    if (this._highlightedIndex !== null) {
+      this._$previousResults.eq(this._highlightedIndex).click();
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .removeClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+      this._highlightedIndex = null;
+    }
+  }
+
+  /**
+   * Clear the list of results and mark the results list as closed.
+   * @method _clearResults
+   * @return {undefined}
+   */
+  _clearResults() {
+    this._$typeaheadResults.empty();
+    this._isResultsOpen = false;
+  }
+
+  /**
+   * Highlight the result next up in the list and set the input to the value highlighted.
+   * @method _highlightUp
+   * @return {Boolean} Return false to prevent the cursor from moving in the input field
+   */
+  _highlightUp() {
+    if (this._highlightedIndex === null) {
+      this._highlightedIndex = this._$previousResults.length - 1;
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .addClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+    } else if (this._highlightedIndex === 0) {
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .removeClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+      this._highlightedIndex = null;
+    } else {
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .removeClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+      this._highlightedIndex -= 1;
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .addClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+    }
+
+    this._$typeahead.val(this._$previousResults.eq(this._highlightedIndex).text());
+    return false;
+  }
+
+  /**
+   * Highlight the result next down in the list and set the input to the value highlighted.
+   * @method _highlightDown
+   * @return {Boolean} Return false to prevent the cursor from moving in the input field
+   */
+  _highlightDown() {
+    if (this._highlightedIndex === null) {
+      this._highlightedIndex = 0;
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .addClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+    } else if (this._highlightedIndex === this._$previousResults.length - 1) {
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .removeClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+      this._highlightedIndex = null;
+    } else {
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .removeClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+      this._highlightedIndex += 1;
+      this._$previousResults
+        .eq(this._highlightedIndex)
+        .addClass(TYPEAHEAD.RESULT_HIGHLIGHTED_CLASS);
+    }
+
+    this._$typeahead.val(this._$previousResults.eq(this._highlightedIndex).text());
+    return false;
   }
 
   /**
@@ -132,13 +188,15 @@ class Typeahead {
    * @return {undefined}
    */
   _handleInput(evt) {
+    this._$typeaheadResults.empty();
+    this._highlightedIndex = null;
+
     this._mapboxClient.geocodeForward(evt.target.value, (err, res) => {
       if (err) {
         return;
       }
 
       const locations = res.features;
-      this._$typeaheadResults.empty();
 
       for (let i = 0, len = locations.length; i < len; i++) {
         const location = locations[i];
@@ -147,9 +205,9 @@ class Typeahead {
 
         // Create and insert an element for each search result
         const searchResult = document.createElement('li');
-        searchResult.className = 'typeahead__result';
+        searchResult.className = TYPEAHEAD.RESULT_CLASS;
         searchResult.innerHTML = location.place_name;
-        searchResult.setAttribute('data-center', `${long},${lat}`);
+        searchResult.setAttribute(TYPEAHEAD.COORDINATES_ATTRIBUTE, `${long},${lat}`);
 
         this._$typeaheadResults.append(searchResult);
         this._isResultsOpen = true;
@@ -191,27 +249,27 @@ class Typeahead {
   _handleResultsClick(evt) {
     const $eventTarget = $(evt.target);
 
-    if (!$eventTarget.hasClass('typeahead__result')) {
+    if (!$eventTarget.hasClass(TYPEAHEAD.RESULT_CLASS)) {
       return;
     }
 
-    let longLat = $eventTarget.attr('data-center').split(',');
+    let longLat = $eventTarget.attr(TYPEAHEAD.COORDINATES_ATTRIBUTE).split(',');
 
     longLat = longLat.map((val) => {
       return parseFloat(val, 10);
     });
 
     // TODO: Zoom in and fly to long/lat coordinates on the map
+    // map.flyTo({
+    //   center: [long, lat],
+    // });
 
-    // Set the input text to the selected value
+    // Set the input text to the selected value and set
+    // previous results to the result that was selected
     this._$typeahead.val($eventTarget.text());
-
-    // Set the previous results to the result that was selected
     this._$previousResults = $eventTarget;
 
-    // Hide and clear the list of results
-    this._$typeaheadResults.empty();
-    this._isResultsOpen = false;
+    this._clearResults();
   }
 }
 
