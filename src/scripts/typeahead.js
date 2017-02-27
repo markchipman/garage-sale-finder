@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import MapboxClient from 'mapbox';
+import { map } from './map';
 import { KEY_CODES, MAPBOX, TYPEAHEAD } from './constants';
 import { debounce } from './utils';
 
@@ -253,19 +254,16 @@ class Typeahead {
       return;
     }
 
-    let longLat = $eventTarget.attr(TYPEAHEAD.COORDINATES_ATTRIBUTE).split(',');
-
-    longLat = longLat.map((val) => {
-      return parseFloat(val, 10);
+    // Parse the coordinates from the selected result and fly the map to that location
+    const longLat = $eventTarget.attr(TYPEAHEAD.COORDINATES_ATTRIBUTE).split(',');
+    map.flyTo({
+      center: longLat.map((val) => {
+        return parseFloat(val, 10);
+      }),
     });
 
-    // TODO: Zoom in and fly to long/lat coordinates on the map
-    // map.flyTo({
-    //   center: [long, lat],
-    // });
-
     // Set the input text to the selected value and set
-    // previous results to the result that was selected
+    // previous results to the value that was selected
     this._$typeahead.val($eventTarget.text());
     this._$previousResults = $eventTarget;
 

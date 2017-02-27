@@ -3,6 +3,14 @@
  * File where all mixins are defined
  */
 
+@mixin clearfix() {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
 @mixin page-container() {
   box-sizing: border-box;
   display: block;

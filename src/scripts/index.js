@@ -8,37 +8,31 @@ import 'babel-polyfill';
 import $ from 'jquery';
 import MapboxGL from 'mapbox-gl';
 import Typeahead from './typeahead';
+import { map } from './map';
 import { MAPBOX } from './constants';
 
 import '../styles/index.scss';
 
-MapboxGL.accessToken = MAPBOX.ACCESS_TOKEN;
-let map;
+const loadMap = new Promise((resolve, reject) => {
+  map.on('load', resolve);
+});
+const getLocation = new Promise((resolve, reject) => {
+  navigator.geolocation.getCurrentPosition(resolve, reject);
+});
 
-let long;
-let lat;
+// TODO: Hide map then make it visible
+// TODO: Add loading spinner
+// TODO: Fix width of map
+Promise.all([loadMap, getLocation]).then((values) => {
+  const [evt, position] = values;
 
-// TODO: Handle default location (error or when geolocation is not available)
-if ('geolocation' in navigator) {
-  navigator.geolocation.getCurrentPosition((position) => {
-    long = position.coords.longitude;
-    lat = position.coords.latitude;
+  map.setCenter([position.coords.longitude, position.coords.latitude]);
 
-    // TODO: Finish loading state
-    $('.loading').addClass('loading--hidden');
-
-    map = new MapboxGL.Map({
-        container: 'map-canvas',
-        style: 'mapbox://styles/mapbox/streets-v9',
-        zoom: 13,
-        center: [long, lat],
-    });
-  }, (error) => {
-    // TODO: Location is not available
-  });
-} else {
-  // TODO: geolocation is not available
-}
+  $('.loading').addClass('loading--hidden');
+  $('.map').addClass('map--visible');
+}).catch((err) => {
+  console.log(err);
+});
 
 // TODO: Initialize typeahead more gracefully?
 // TODO: Ensure only one typeahead and map are initialized?
