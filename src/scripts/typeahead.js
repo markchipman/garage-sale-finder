@@ -1,8 +1,9 @@
 import $ from 'jquery';
+import MapboxGL from 'mapbox-gl';
 import MapboxClient from 'mapbox';
 import { map } from './map';
 import { KEY_CODES, MAPBOX, TYPEAHEAD } from './constants';
-import { debounce } from './utils';
+import { debounce, getRandomPoint } from './utils';
 
 /**
  * @class Typeahead
@@ -17,6 +18,9 @@ class Typeahead {
     this._mapboxClient = new MapboxClient(MAPBOX.ACCESS_TOKEN);
     this._isResultsOpen = false;
     this._highlightedIndex = null;
+
+    // TODO: Turn map into a class and store these there instead?
+    this._mapMarkers = [];
 
     this._getElements();
     this._initializeEventListeners();
@@ -254,12 +258,40 @@ class Typeahead {
       return;
     }
 
-    // Parse the coordinates from the selected result and fly the map to that location
-    const longLat = $eventTarget.attr(TYPEAHEAD.COORDINATES_ATTRIBUTE).split(',');
+    // Parse the coordinates from the selected result
+    let longLat = $eventTarget.attr(TYPEAHEAD.COORDINATES_ATTRIBUTE).split(',');
+    longLat = longLat.map((val) => parseFloat(val, 10));
+
+    // Remove all markers from the map
+    this._mapMarkers.map((mapMarker) => {
+      mapMarker.remove();
+    });
+    this._mapMarkers.splice(0, this._mapMarkers.length);
+
+    // Center the selected location on the map
     map.flyTo({
-      center: longLat.map((val) => {
-        return parseFloat(val, 10);
-      }),
+      center: longLat,
+    });
+
+    // TODO: Fetch garage sale data and display nearby points on map:
+    // Up to 3 dates, start time, street, cross street, city, title, postal code
+
+    // TODO: Turn this into a function on Map class
+    Array(5).fill().map(() => {
+      const randomPoint = getRandomPoint(longLat[0], longLat[1]);
+
+      const popup = new MapboxGL.Popup({ offset: 20 })
+        .setText(`[${randomPoint[0]}, ${randomPoint[1]}]`);
+
+      const el = document.createElement('div');
+      el.style.backgroundImage = 'url(https://placehold.it/40x40)';
+      el.style.width = '40px';
+      el.style.height = '40px';
+      const mapMarker = new MapboxGL.Marker(el, { offset: [-20, -20] })
+        .setLngLat(randomPoint)
+        .setPopup(popup)
+        .addTo(map);
+      this._mapMarkers.push(mapMarker);
     });
 
     // Set the input text to the selected value and set

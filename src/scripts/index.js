@@ -20,9 +20,6 @@ const getLocation = new Promise((resolve, reject) => {
   navigator.geolocation.getCurrentPosition(resolve, reject);
 });
 
-// TODO: Hide map then make it visible
-// TODO: Add loading spinner
-// TODO: Fix width of map
 Promise.all([loadMap, getLocation]).then((values) => {
   const [evt, position] = values;
 
@@ -30,6 +27,9 @@ Promise.all([loadMap, getLocation]).then((values) => {
 
   $('.loading').addClass('loading--hidden');
   $('.map').addClass('map--visible');
+
+  // Need to call `resize` when the map is shown after being initially hidden with CSS
+  map.resize();
 }).catch((err) => {
   console.log(err);
 });

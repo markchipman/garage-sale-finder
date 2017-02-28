@@ -20,6 +20,29 @@ export function debounce(func, wait = 100, context = this) {
   };
 }
 
+/**
+ * Given a longitude and latitude, generates a random nearby point.
+ * @param  {Number} x0 Longitude
+ * @param  {Number} y0 Latitude
+ * @return {Array}     Array containing new point values
+ */
+export function getRandomPoint(x0, y0) {
+  const r = 1000 / 111300; // = 1,000 meters
+  const u = Math.random();
+  const v = Math.random();
+  const w = r * Math.sqrt(u);
+  const t = 2 * Math.PI * v;
+  const x = w * Math.cos(t);
+  const x1 = x / Math.cos(y0);
+  const y1 = w * Math.sin(t);
+
+  return [
+    x0 + x1,
+    y0 + y1,
+  ];
+}
+
 export default {
   debounce,
+  getRandomPoint,
 };
